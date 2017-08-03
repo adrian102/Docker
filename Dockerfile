@@ -24,7 +24,3 @@ RUN \
     docker-php-ext-install opcache exif gd mcrypt && \
     docker-php-ext-enable mongodb.so && \
     docker-php-source delete
-
-
-
-
