@@ -1,21 +1,19 @@
 FROM php:7-fpm-alpine
 
 RUN apk update
-RUN apk add --no-cache --virtual .ext-deps \
+RUN \
+    apk add --no-cache --virtual .ext-deps \
     libjpeg-turbo-dev \
     libwebp-dev \
     libpng-dev \
     freetype-dev \
-    libmcrypt \
-    libmcrypt-dev \
     g++ make autoconf
 
 RUN \
     docker-php-ext-configure opcache && \
     docker-php-ext-configure exif && \
     docker-php-ext-configure gd \
-    --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-webp-dir=/usr/include --with-freetype-dir=/usr/include && \
-    docker-php-ext-configure mcrypt
+    --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-webp-dir=/usr/include --with-freetype-dir=/usr/include
 
 # Mongo Installation
 RUN \
