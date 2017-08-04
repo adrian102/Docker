@@ -1,7 +1,7 @@
 FROM webiny/php7
 
 #
-# Xdebug
+# Xdebug setup
 #
 
 RUN docker-php-source extract \
@@ -15,11 +15,11 @@ RUN docker-php-source extract \
     && echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 #
-# PHPUnit
+# Install PHPUnit
 #
 
 RUN cd /tmp \
-  && curl -O https://phar.phpunit.de/phpunit.phar \
+  && curl -LO https://phar.phpunit.de/phpunit.phar \
   && chmod +x phpunit.phar \
   && mv phpunit.phar /usr/local/bin/phpunit
 
