@@ -1,26 +1,26 @@
-FROM php:7-fpm-alpine
+FROM webiny/php7
 
-RUN apk add --no-cache --virtual .ext-deps \
-        libjpeg-turbo-dev \
-        libwebp-dev \
-        libpng-dev \
-        freetype-dev \
-        libmcrypt-dev
+#
+# Xdebug
+#
 
-RUN \
-    docker-php-ext-configure opcache && \
-    docker-php-ext-configure exif && \
-    docker-php-ext-configure gd \
-    --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-webp-dir=/usr/include --with-freetype-dir=/usr/include && \
-    docker-php-ext-configure mcrypt
-    
-RUN \
-    apk add --no-cache --virtual .mongodb-ext-build-deps openssl-dev && \
-    pecl install mongodb && \
-    pecl clear-cache && \
-    apk del .mongodb-ext-build-deps
-    
-RUN \
-    docker-php-ext-install opcache exif gd mcrypt && \
-    docker-php-ext-enable mongodb.so && \
-    docker-php-source delete
+RUN docker-php-source extract \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && docker-php-source delete \
+    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_port=9000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_handler=dbgp" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+#
+# PHPUnit
+#
+
+RUN cd /tmp \
+  && curl -O https://phar.phpunit.de/phpunit.phar \
+  && chmod +x phpunit.phar \
+  && mv phpunit.phar /usr/local/bin/phpunit
+
+RUN rm -rf /tmp/*
