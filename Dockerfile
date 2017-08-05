@@ -19,8 +19,8 @@ RUN \
     && pecl channel-update pecl.php.net \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb.so \
-    && pecl install libsodium \
-    && docker-php-ext-enable sodium \
+    && pecl install libsodium-1.0.6 \
+    && docker-php-ext-enable libsodium \
     && pecl clear-cache \
     && apk del .pecl-ext-build-deps \
     && docker-php-source delete
