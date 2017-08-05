@@ -1,27 +1,26 @@
 FROM php:7-fpm-alpine
 
-RUN apk update
 RUN \
-    apk add --no-cache --virtual .ext-deps \
-    libjpeg-turbo-dev \
-    libwebp-dev \
-    libpng-dev \
+    apk update \
+    && apk add --no-cache \
     freetype-dev \
-    g++ make autoconf
+    g++ make autoconf \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    libsodium-dev \
+    libwebp-dev \
+    openssl-dev \
 
-RUN \
-    docker-php-ext-configure opcache && \
-    docker-php-ext-configure exif && \
-    docker-php-ext-configure gd \
-    --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-webp-dir=/usr/include --with-freetype-dir=/usr/include
+    && docker-php-ext-configure opcache \
+    && docker-php-ext-configure exif \
+    && docker-php-ext-configure gd --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-webp-dir=/usr/include --with-freetype-dir=/usr/include \
 
-# Mongo Installation
-RUN \
-    apk add --no-cache --virtual .mongodb-ext-build-deps openssl-dev && \
-    pecl install mongodb && \
-    pecl clear-cache && \
-    apk del .mongodb-ext-build-deps
-
-RUN \
-    docker-php-ext-enable mongodb.so && \
-    docker-php-source delete
+    && apk add --no-cache --virtual .pecl-ext-build-deps \
+    && pecl channel-update pecl.php.net \
+    && pecl install mongodb \
+    && docker-php-ext-enable mongodb.so \
+    && pecl install libsodium \
+    && docker-php-ext-enable sodium \
+    && pecl clear-cache \
+    && apk del .pecl-ext-build-deps \
+    && docker-php-source delete
