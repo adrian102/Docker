@@ -11,6 +11,7 @@ RUN \
     libwebp-dev \
     openssl-dev \
 
+    && docker-php-ext-install zip \
     && docker-php-ext-configure opcache \
     && docker-php-ext-configure exif \
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-webp-dir=/usr/include --with-freetype-dir=/usr/include \
