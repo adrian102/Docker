@@ -1,12 +1,16 @@
 FROM webiny/php7
 
-RUN docker-php-source extract \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
-    && docker-php-source delete \
+ENV VERSION='8'
 
-    && cd /tmp \
-    && curl -LO https://phar.phpunit.de/phpunit.phar \
-    && chmod +x phpunit.phar \
-    && mv phpunit.phar /usr/local/bin/phpunit \
-    && rm -rf /tmp/*
+# Install nodejs LTS
+RUN curl -sL https://deb.nodesource.com/setup_${VERSION}.x | bash - \
+    && apt -y install build-essential \
+    && apt -y install nodejs \
+    && npm i -g npm
+
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    && apt update && apt install yarn
+
+# Clean file
+RUN apt-get autoclean
