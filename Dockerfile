@@ -1,9 +1,16 @@
 FROM webiny/php7
 
-ENV VERSION='8'
+RUN yes | pecl install xdebug \
+    && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
 
-# Install nodejs LTS
-RUN curl -sL https://deb.nodesource.com/setup_${VERSION}.x | bash - \
+RUN cd /tmp \
+    && curl -LO https://phar.phpunit.de/phpunit.phar \
+    && chmod +x phpunit.phar \
+    && mv phpunit.phar /usr/local/bin/phpunit
+
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && apt -y install build-essential \
     && apt -y install nodejs \
     && npm i -g npm
