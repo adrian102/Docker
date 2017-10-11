@@ -10,16 +10,7 @@ RUN cd /tmp \
     && chmod +x phpunit.phar \
     && mv phpunit.phar /usr/local/bin/phpunit
 
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-    && apt -y install build-essential \
-    && apt -y install nodejs \
-    && npm i -g npm
-
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-    && apt update && apt install yarn
-
-# git, Node and YARN - for webiny-cli
+# Install git, node and yarn
 RUN apt-get install -y git
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -34,5 +25,8 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 
 # Clean file
 RUN apt-get autoclean
+
+RUN echo 'alias ll="ls -alh"' >> ~/.bashrc
+RUN ln -sf /home/.webiny/cli/node_modules/webiny-cli/run.js /usr/local/bin/webiny-cli
 
 ENV WEBINY_ENVIRONMENT="docker"
